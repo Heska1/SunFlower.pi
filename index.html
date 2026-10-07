@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi Çiftliği Pro v2</title>
+    <title>Pi Çiftliği Pro v3</title>
     <!-- Pi Network SDK -->
     <script src="https://minepi.com"></script>
     <style>
@@ -57,34 +57,6 @@
         }
         .stat-box span { font-size: 22px; font-weight: bold; color: #f1c40f; display: block; margin-top: 5px; }
         
-        /* Tohum Seçim Bölümü */
-        .bag-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #bdc3c7; text-align: left; margin-bottom: 8px; }
-        .seed-selector {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .seed-card {
-            min-width: 110px;
-            background: var(--card-bg);
-            border: 2px solid transparent;
-            border-radius: 16px;
-            padding: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        .seed-card.active {
-            border-color: var(--primary);
-            background: rgba(46, 204, 113, 0.15);
-            transform: translateY(-3px);
-        }
-        .seed-icon { font-size: 28px; display: block; margin-bottom: 4px; }
-        .seed-name { font-size: 12px; font-weight: bold; }
-        .seed-cost { font-size: 11px; color: #bdc3c7; }
-
         /* Tarla Grid Yapısı */
         .farm-grid {
             display: grid;
@@ -127,6 +99,39 @@
         }
         .progress-bar { width: 0%; height: 100%; background: #3498db; transition: width 1s linear; }
 
+        /* Yeni Tohum Marketi (Altta Bulunan Panel) */
+        .market-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .market-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #f1c40f; text-align: left; margin-bottom: 10px; font-weight: bold; }
+        .market-grid {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+        .market-item {
+            flex: 1;
+            min-width: 100px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .market-item.selected {
+            border-color: #f1c40f;
+            background: rgba(241, 196, 15, 0.1);
+        }
+        .item-emoji { font-size: 24px; display: block; }
+        .item-name { font-size: 12px; font-weight: bold; margin: 3px 0; }
+        .item-price { font-size: 11px; color: #2ecc71; font-weight: bold; }
+
         /* Reklam Buton Alanı */
         .ad-banner {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
@@ -155,7 +160,7 @@
 
 <div class="app-container">
     <div class="profile-bar">
-        <span style="font-weight: bold; font-size: 18px;">🚜 PiFarm v2</span>
+        <span style="font-weight: bold; font-size: 18px;">🚜 PiFarm v3</span>
         <div class="user-tag" id="username">Yükleniyor...</div>
     </div>
 
@@ -164,26 +169,7 @@
         <div class="stat-box">Süper Gübre 🧪 <span id="fertilizer-count">1</span></div>
     </div>
 
-    <div class="bag-title">🌱 Ekim Yapılacak Tohum</div>
-    <div class="seed-selector">
-        <div class="seed-card active" id="card-tomato" onclick="selectSeed('tomato', 3, '🍅')">
-            <span class="seed-icon">🍅</span>
-            <span class="seed-name">Domates</span>
-            <span class="seed-cost">Fiyat: 3 🪙</span>
-        </div>
-        <div class="seed-card" id="card-pepper" onclick="selectSeed('pepper', 7, '🫑')">
-            <span class="seed-icon">🫑</span>
-            <span class="seed-name">Biber</span>
-            <span class="seed-cost">Fiyat: 7 🪙</span>
-        </div>
-        <div class="seed-card" id="card-berry" onclick="selectSeed('berry', 15, '🍓')">
-            <span class="seed-icon">🍓</span>
-            <span class="seed-name">Altın Çilek</span>
-            <span class="seed-cost">Fiyat: 15 🪙</span>
-        </div>
-    </div>
-
-    <!-- 4 Modern Tarla -->
+    <!-- 4 Adet Tarla -->
     <div class="farm-grid">
         <div class="plot" id="plot-0" onclick="interactPlot(0)">
             <span class="plot-emoji" id="emoji-0">🟫</span>
@@ -204,6 +190,28 @@
             <span class="plot-emoji" id="emoji-3">🟫</span>
             <span id="text-3" style="font-size:13px; font-weight:bold;">Boş Toprak</span>
             <div class="progress-bar-container" id="pbc-3" style="display:none;"><div class="progress-bar" id="bar-3"></div></div>
+        </div>
+    </div>
+
+    <!-- 🛒 Yenilenen Çiftçi Marketi (Altta Sabit) -->
+    <div class="market-section">
+        <div class="market-title">🛒 Tohum Marketi</div>
+        <div class="market-grid">
+            <div class="market-item selected" id="item-tomato" onclick="selectSeed('tomato', 3, '🍅')">
+                <span class="item-emoji">🍅</span>
+                <span class="item-name">Domates</span>
+                <span class="item-price">3 🪙</span>
+            </div>
+            <div class="market-item" id="item-pepper" onclick="selectSeed('pepper', 7, '🫑')">
+                <span class="item-emoji">🫑</span>
+                <span class="item-name">Biber</span>
+                <span class="item-price">7 🪙</span>
+            </div>
+            <div class="market-item" id="item-berry" onclick="selectSeed('berry', 15, '🍓')">
+                <span class="item-emoji">🍓</span>
+                <span class="item-name">Altın Çilek</span>
+                <span class="item-price">15 🪙</span>
+            </div>
         </div>
     </div>
 
@@ -249,12 +257,3 @@
         selectedSeed = type;
         seedCost = cost;
         seedEmoji = emoji;
-        document.querySelectorAll('.seed-card').forEach(c => c.classList.remove('active'));
-        document.getElementById(`card-${type}`).classList.add('active');
-    }
-
-    function interactPlot(index) {
-        let plot = plots[index];
-        let plotEl = document.getElementById(`plot-${index}`);
-        let emojiEl = document.getElementById(`emoji-${index}`);
-        let textEl = document.getElementById(`text-${index}`);
