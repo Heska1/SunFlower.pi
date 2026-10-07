@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pi Çiftliği - Gelişmiş Gübre Görevleri</title>
+    <title>Pi Çiftliği - Düzeltilmiş Sürüm</title>
     <style>
         body {
             font-family: sans-serif;
@@ -50,7 +50,6 @@
         .farm-plot.growing { background: #795548; border-color: #ff9800; }
         .farm-plot.ready { background: #27ae60; border-color: #2ecc71; }
 
-        /* 🧪 GÜBRE SEÇİM PANELİ VE REKLAM BUTONLARI */
         .fertilizer-panel {
             background: #192734;
             border: 2px solid #3498db;
@@ -95,7 +94,6 @@
             cursor: pointer;
             width: 100%;
         }
-        .ad-mini-btn:active { transform: scale(0.95); }
 
         .market-panel {
             background: #243447;
@@ -126,7 +124,7 @@
 <body>
 
 <div class="game-wrapper">
-    <h2>🚜 Pi Çiftliği v9</h2>
+    <h2>🚜 Pi Çiftliği v10</h2>
     
     <div class="stats-panel">
         <div>Bakiye: <b id="ui-balance" style="color:#f1c40f;">15</b> 🪙</div>
@@ -135,12 +133,10 @@
         </div>
     </div>
 
-    <!-- 🎒 GÜBRE ÜRETİM VE SEÇİM ALANI -->
+    <!-- GÜBRE PANELİ -->
     <div class="fertilizer-panel">
         <div style="font-size: 13px; font-weight: bold; color: #3498db; text-align: center;">🎒 Aktif Gübre Seç ve Üret:</div>
         <div class="fert-selector">
-            
-            <!-- Normal Gübre Kartı (Seçmek için karta, reklam için butonuna basılır) -->
             <div class="fert-card active" id="fert-normal" onclick="changeActiveFertilizer('normal')">
                 <div>
                     <span class="fert-emoji">🫙</span>
@@ -150,7 +146,6 @@
                 <button class="ad-mini-btn" onclick="watchAdForFertilizer('normal', event)">📺 Reklam (<span id="ui-progress-normal">0/2</span>)</button>
             </div>
             
-            <!-- Süper Gübre Kartı -->
             <div class="fert-card" id="fert-super" onclick="changeActiveFertilizer('super')">
                 <div>
                     <span class="fert-emoji">🧪</span>
@@ -159,7 +154,6 @@
                 </div>
                 <button class="ad-mini-btn" onclick="watchAdForFertilizer('super', event)">📺 Reklam (<span id="ui-progress-super">0/4</span>)</button>
             </div>
-
         </div>
     </div>
 
@@ -171,6 +165,7 @@
         <div class="farm-plot" id="plot-3" onclick="handlePlotClick(3)">🟫<br><span id="text-3">Boş Toprak</span></div>
     </div>
 
+    <!-- MARKET PANELİ -->
     <div class="market-panel">
         <h4 style="margin: 0 0 5px 0; text-align: center; color: #f1c40f;">🛒 Ekeceğin Tohumu Alttan Seç:</h4>
         <div class="market-row active-seed" id="seed-tomato" onclick="changeActiveSeed('tomato', 3, '🍅')">
@@ -190,15 +185,12 @@
 
 <script>
     let balance = 15;
-    
-    // Gübre Stokları, Reklam Sayaçları ve Hedefleri
     let fertNormalCount = 1;
     let fertSuperCount = 0;
     let selectedFertilizer = 'normal';
 
     let adProgressNormal = 0;
     let adProgressSuper = 0;
-    
     const adTargetNormal = 2;
     const adTargetSuper = 4;
 
@@ -234,26 +226,40 @@
         document.getElementById('fert-' + type).classList.add('active');
     }
 
-    // 📺 GÜBRE ÖZEL REKLAM İZLEME SİSTEMİ
     function watchAdForFertilizer(type, event) {
-        event.stopPropagation(); // Karta tıklama olayını tetiklemesini engelle (Sadece butonu çalıştırır)
-        
+        event.stopPropagation();
         alert("Reklam yükleniyor... Lütfen bekleyin.");
-        
         setTimeout(() => {
             if (type === 'normal') {
                 adProgressNormal++;
                 if (adProgressNormal >= adTargetNormal) {
-                    adProgressNormal = 0; // Sayacı sıfırla
-                    fertNormalCount++;    // 1 stok ekle
+                    adProgressNormal = 0;
+                    fertNormalCount++;
                     alert("Tebrikler! 2 reklam izleme görevi bitti. 1 adet Normal Gübre (🫙) kazandınız!");
                 } else {
-                    alert("Reklam izlendi! Normal Gübre için kalan reklam: " + (adTargetNormal - adProgressNormal));
+                    alert("Reklam izlendi! Kalan reklam: " + (adTargetNormal - adProgressNormal));
                 }
             } else if (type === 'super') {
                 adProgressSuper++;
                 if (adProgressSuper >= adTargetSuper) {
-                    adProgressSuper = 0; // Sayacı sıfırla
-                    fertSuperCount++;    // 1 stok ekle
+                    adProgressSuper = 0;
+                    fertSuperCount++;
                     alert("Muhteşem! 4 reklam izleme görevi bitti. 1 adet Süper Gübre (🧪) kazandınız!");
                 } else {
+                    alert("Reklam izlendi! Kalan reklam: " + (adTargetSuper - adProgressSuper));
+                }
+            }
+            refreshUI();
+        }, 1500);
+    }
+
+    function handlePlotClick(index) {
+        let plot = plotsData[index];
+        let plotElement = document.getElementById('plot-' + index);
+
+        // 1. BOŞ TOPRAĞA EKİM YAPMA (DÜZELTİLDİ)
+        if (plot.status === 'empty') {
+            if (balance >= activeSeedCost) {
+                balance -= activeSeedCost;
+                refreshUI();
+
