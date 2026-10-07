@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pi Farm - Premium Edition</title>
+    <title>Pi Farm - Unbreakable Edition</title>
     <style>
         :root {
             --bg-color: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --border-glow: rgba(241, 196, 15, 0.3);
+            --card-bg: rgba(30, 41, 59, 0.85);
             --text-main: #f8fafc;
             --primary: #10b981;
             --secondary: #3b82f6;
@@ -25,6 +24,8 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .wrapper { 
@@ -68,7 +69,7 @@
         .stat-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 2px; }
         .stat-value { font-size: 18px; font-weight: bold; }
 
-        /* 🎒 FERTILIZER BAG DESIGN */
+        /* 🎒 FERTILIZER BAG */
         .bag { 
             background: rgba(15, 23, 42, 0.4); 
             border: 1.5px solid var(--secondary); 
@@ -78,6 +79,7 @@
         }
         .bag-title { font-size: 12px; font-weight: bold; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center; }
         .bag-grid { display: flex; gap: 12px; }
+        
         .bag-card { 
             flex: 1; 
             background: rgba(30, 41, 59, 0.5); 
@@ -85,22 +87,26 @@
             border-radius: 14px; 
             padding: 10px; 
             cursor: pointer; 
-            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-sizing: border-box;
         }
         .bag-card.active { 
             border-color: var(--secondary); 
             background: rgba(59, 130, 246, 0.15);
             box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
         }
-        .bag-card span { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
+        
+        /* İçindeki elementlerin tıklamayı engellemesini önlüyoruz */
+        .bag-card * { pointer-events: none; }
+        .bag-card .ad-btn { pointer-events: auto; } /* Reklam butonu hariç */
+
         .ad-btn { 
             background: #ef4444; 
             color: white; 
             border: none; 
-            padding: 6px; 
+            padding: 8px; 
             font-size: 11px; 
             font-weight: bold; 
             border-radius: 8px; 
@@ -108,11 +114,10 @@
             cursor: pointer; 
             width: 100%;
             box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
-            transition: background 0.2s;
+            box-sizing: border-box;
         }
-        .ad-btn:hover { background: #dc2626; }
 
-        /* 🚜 FARM GRID DESIGN */
+        /* 🚜 FARM GRID */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .plot { 
             background: #472f22; 
@@ -126,9 +131,11 @@
             border: 3px solid #2b1c14; 
             font-weight: bold; 
             box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease;
+            box-sizing: border-box;
         }
-        .plot:active { transform: scale(0.97); }
+        .plot * { pointer-events: none; } /* İçindeki yazıların tıklamayı bozmasını engeller */
+        .plot:active { transform: scale(0.96); }
         .plot.growing { background: #5a3d2e; border-color: var(--accent); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
         .plot.ready { 
             background: var(--primary); 
@@ -138,12 +145,11 @@
         }
         
         @keyframes pulseGlow {
-            0% { transform: scale(1); }
+            0%, 100% { transform: scale(1); }
             50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
         }
 
-        /* 🛒 SEED MARKET DESIGN */
+        /* 🛒 SEED MARKET */
         .market { 
             background: rgba(15, 23, 42, 0.4); 
             border: 1.5px solid var(--accent); 
@@ -152,6 +158,7 @@
             text-align: left; 
         }
         .market-title { font-size: 12px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 10px; }
+        
         .market-row { 
             display: flex; 
             justify-content: space-between; 
@@ -162,14 +169,15 @@
             border-radius: 12px; 
             cursor: pointer; 
             border: 2px solid transparent; 
-            transition: all 0.2s ease;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
         }
+        .market-row * { pointer-events: none; }
         .market-row.active-seed { 
             border-color: var(--accent); 
             background: rgba(245, 158, 11, 0.12); 
         }
-        .market-row:active { transform: translateX(2px); }
-        .badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(16,185,129,0.2); }
+        .badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -177,7 +185,6 @@
 <div class="wrapper">
     <h2>🚜 Pi Farm Pro</h2>
     
-    <!-- Balance & Seed Panel -->
     <div class="panel">
         <div class="stat-item">
             <span class="stat-label">Wallet Balance</span>
@@ -193,12 +200,12 @@
     <div class="bag">
         <div class="bag-title">🎒 Active Fertilizer</div>
         <div class="bag-grid">
-            <div class="bag-card active" id="f-normal" onclick="setFertilizer('normal')">
+            <div class="bag-card active" id="f-normal" onclick="setFertilizer('normal', event)">
                 <span>🫙 Normal</span>
                 <div style="font-size: 12px; color: #94a3b8; margin-top:2px;">Stock: <b id="ui-stock-n" style="color:white">1</b></div>
                 <button class="ad-btn" onclick="watchAd('normal', event)">📺 Ads (<span id="ui-prog-n">0/2</span>)</button>
             </div>
-            <div class="bag-card" id="f-super" onclick="setFertilizer('super')">
+            <div class="bag-card" id="f-super" onclick="setFertilizer('super', event)">
                 <span>🧪 Super</span>
                 <div style="font-size: 12px; color: #94a3b8; margin-top:2px;">Stock: <b id="ui-stock-s" style="color:white">0</b></div>
                 <button class="ad-btn" onclick="watchAd('super', event)">📺 Ads (<span id="ui-prog-s">0/4</span>)</button>
@@ -208,24 +215,24 @@
 
     <!-- FARM GRID -->
     <div class="grid">
-        <div class="plot" id="plot-0" onclick="clickPlot(0)">🟫<br><span id="text-0" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
-        <div class="plot" id="plot-1" onclick="clickPlot(1)">🟫<br><span id="text-1" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
-        <div class="plot" id="plot-2" onclick="clickPlot(2)">🟫<br><span id="text-2" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
-        <div class="plot" id="plot-3" onclick="clickPlot(3)">🟫<br><span id="text-3" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
+        <div class="plot" id="plot-0" onclick="clickPlot(0, event)">🟫<br><span id="text-0" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
+        <div class="plot" id="plot-1" onclick="clickPlot(1, event)">🟫<br><span id="text-1" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
+        <div class="plot" id="plot-2" onclick="clickPlot(2, event)">🟫<br><span id="text-2" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
+        <div class="plot" id="plot-3" onclick="clickPlot(3, event)">🟫<br><span id="text-3" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
     </div>
 
     <!-- SEED MARKET -->
     <div class="market">
         <div class="market-title">🛒 Seed Market</div>
-        <div class="market-row active-seed" id="s-tomato" onclick="setSeed('tomato', 3, '🍅', 8, 6)">
+        <div class="market-row active-seed" id="s-tomato" onclick="setSeed('tomato', 3, '🍅', 8, 6, event)">
             <div><b>🍅 Tomato</b> <br><small style="color: #94a3b8;">Time: 8s | Reward: 6 🪙</small></div>
             <span class="badge">3 🪙</span>
         </div>
-        <div class="market-row" id="s-pepper" onclick="setSeed('pepper', 7, '🫑', 18, 15)">
+        <div class="market-row" id="s-pepper" onclick="setSeed('pepper', 7, '🫑', 18, 15, event)">
             <div><b>🫑 Pepper</b> <br><small style="color: #94a3b8;">Time: 18s | Reward: 15 🪙</small></div>
             <span class="badge">7 🪙</span>
         </div>
-        <div class="market-row" id="s-berry" onclick="setSeed('berry', 15, '🍓', 40, 40)">
+        <div class="market-row" id="s-berry" onclick="setSeed('berry', 15, '🍓', 40, 40, event)">
             <div><b>🍓 Golden Berry</b> <br><small style="color: #94a3b8;">Time: 40s | Reward: 40 🪙</small></div>
             <span class="badge">15 🪙</span>
         </div>
@@ -246,6 +253,4 @@
     let seedSell = 6;
 
     let plots = [
-        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
-        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
         { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
