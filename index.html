@@ -3,47 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pi Çiftliği Yeni Sayfa Sürümü</title>
+    <title>Pi Çiftliği Kararlı Sürüm</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #1a252f;
-            color: white;
-            text-align: center;
+            font-family: sans-serif;
+            background: #141d26;
+            color: #ffffff;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
+            text-align: center;
         }
-        .app-box {
+        .game-wrapper {
             max-width: 400px;
             margin: auto;
-            background: rgba(0,0,0,0.6);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            background: #1f2d3d;
+            padding: 15px;
+            border-radius: 16px;
             box-sizing: border-box;
         }
-        .stats-bar {
-            background: rgba(255,255,255,0.1);
+        .stats-panel {
+            background: #2c3e50;
             padding: 10px;
-            border-radius: 12px;
+            border-radius: 10px;
             margin-bottom: 15px;
-            font-size: 16px;
+            font-size: 15px;
         }
-        
-        /* 📱 1. SAYFA: ÇİFTLİK / TARLA EKRANI */
-        #page-farm {
-            display: block; /* İlk başta bu sayfa açık */
-        }
-        .grid {
+        .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
-        .plot {
+        .farm-plot {
             background: #5c4033;
-            height: 130px;
-            border-radius: 15px;
+            height: 120px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -52,221 +46,211 @@
             border: 3px solid #3d2a1f;
             font-weight: bold;
         }
-        .plot.ready { background: #27ae60; border-color: #2ecc71; }
-        .open-market-btn {
-            background: #f1c40f;
-            color: #1a252f;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
+        .farm-plot.ready {
+            background: #27ae60;
+            border-color: #2ecc71;
         }
-
-        /* 🛒 2. SAYFA: YENİ AÇILAN MARKET EKRANI (TAM SAYFA) */
-        #page-market {
-            display: none; /* İlk başta gizli, JS ile açılacak */
-            background: #2c3e50;
-            border-radius: 15px;
-            padding: 20px;
+        
+        /* 🛒 EKRANDA SABİT DURAN VE ASLA KİLİTLENMEYEN MARKET ALANI */
+        .market-panel {
+            background: #243447;
             border: 2px solid #f1c40f;
-            box-sizing: border-box;
-        }
-        .market-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .back-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .market-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255,255,255,0.1);
-            padding: 12px;
-            margin: 10px 0;
             border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .market-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
             cursor: pointer;
             border: 2px solid transparent;
         }
-        .market-item.selected {
+        .market-row.active-seed {
             border-color: #f1c40f;
-            background: rgba(241,196,15,0.25);
+            background: rgba(241,196,15,0.15);
         }
-        .price { background: #2ecc71; padding: 4px 10px; border-radius: 8px; font-weight: bold; }
+        .badge {
+            background: #2ecc71;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 13px;
+        }
 
-        /* REKLAM ALANI (MARKET SAYFASININ İÇİNDE) */
-        .ad-box {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            margin-top: 20px;
+        /* 📺 GARANTİLİ REKLAM ALANI */
+        .ad-zone {
+            background: #c0392b;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
         }
-        .ad-btn {
-            background: white;
+        .ad-trigger {
+            background: #ffffff;
             color: #c0392b;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
-            margin-top: 8px;
-            font-size: 14px;
+            margin-top: 5px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-<div class="app-box">
+<div class="game-wrapper">
+    <h2>🚜 Pi Çiftliği v6</h2>
     
-    <!-- Üst Bilgi Paneli (Her iki sayfada da görünür) -->
-    <div class="stats-bar">
-        <div>Cüzdan Puanı: <b id="balance" style="color:#f1c40f;">15</b> 🪙</div>
-        <div style="font-size: 13px; margin-top: 3px; color: #bdc3c7;">
-            🧪 Süper Gübre: <b id="fert-count" style="color:#3498db;">1</b> | 
-            Seçili: <b id="selected-seed-txt" style="color:#f1c40f;">🍅 Domates</b>
+    <div class="stats-panel">
+        <div>Bakiye: <b id="ui-balance" style="color:#f1c40f;">15</b> 🪙</div>
+        <div style="font-size: 12px; margin-top: 4px; color: #bdc3c7;">
+            Süper Gübre: <b id="ui-fert">1</b> 🧪 | 
+            Ekilmeye Hazır: <b id="ui-seed" style="color:#f1c40f;">🍅 Domates</b>
         </div>
     </div>
 
-    <!-- 🌾 SAYFA 1: TARLA VE ÇİFTLİK EKRANI -->
-    <div id="page-farm">
-        <div class="grid">
-            <div class="plot" id="plot-0" onclick="interactPlot(0)">🟫<br><span id="text-0">Boş Toprak</span></div>
-            <div class="plot" id="plot-1" onclick="interactPlot(1)">🟫<br><span id="text-1">Boş Toprak</span></div>
-            <div class="plot" id="plot-2" onclick="interactPlot(2)">🟫<br><span id="text-2">Boş Toprak</span></div>
-            <div class="plot" id="plot-3" onclick="interactPlot(3)">🟫<br><span id="text-3">Boş Toprak</span></div>
-        </div>
-        
-        <!-- Marketi Açma Butonu -->
-        <button class="open-market-btn" onclick="openMarketPage()">🛒 Tohum Marketini Aç</button>
+    <!-- TARLALARIMIZ -->
+    <div class="grid-container">
+        <div class="farm-plot" id="plot-0" onclick="handlePlotClick(0)">🟫<br><span id="text-0">Boş Toprak</span></div>
+        <div class="farm-plot" id="plot-1" onclick="handlePlotClick(1)">🟫<br><span id="text-1">Boş Toprak</span></div>
+        <div class="farm-plot" id="plot-2" onclick="handlePlotClick(2)">🟫<br><span id="text-2">Boş Toprak</span></div>
+        <div class="farm-plot" id="plot-3" onclick="handlePlotClick(3)">🟫<br><span id="text-3">Boş Toprak</span></div>
     </div>
 
-    <!-- 🛒 SAYFA 2: YENİ AÇILAN MARKET SAYFASI -->
-    <div id="page-market">
-        <div class="market-header">
-            <h3 style="margin: 0; color: #f1c40f;">🛒 Tohum Marketi</h3>
-            <button class="back-btn" onclick="closeMarketPage()">❌ Kapat</button>
-        </div>
-
-        <div class="market-item selected" id="item-tomato" onclick="selectSeed('tomato', 3, '🍅')">
-            <div><b>🍅 Domates</b><br><small>Süre: 6s | Satış: 6 🪙</small></div>
-            <span class="price">3 🪙</span>
+    <!-- 🛒 BUTON GEREKTİRMEYEN DOĞRUDAN SEÇİMLİ MARKET -->
+    <div class="market-panel">
+        <h4 style="margin: 0 0 5px 0; text-align: center; color: #f1c40f;">🛒 Ekeceğin Tohumu Alttan Seç:</h4>
+        
+        <div class="market-row active-seed" id="seed-tomato" onclick="changeActiveSeed('tomato', 3, '🍅')">
+            <div><b>🍅 Domates</b> <small>(Süre: 6s | Satış: 6 🪙)</small></div>
+            <span class="badge">3 🪙</span>
         </div>
         
-        <div class="market-item" id="item-pepper" onclick="selectSeed('pepper', 7, '🫑')">
-            <div><b>🫑 Biber</b><br><small>Süre: 15s | Satış: 15 🪙</small></div>
-            <span class="price">7 🪙</span>
+        <div class="market-row" id="seed-pepper" onclick="changeActiveSeed('pepper', 7, '🫑')">
+            <div><b>🫑 Biber</b> <small>(Süre: 15s | Satış: 15 🪙)</small></div>
+            <span class="badge">7 🪙</span>
         </div>
         
-        <div class="market-item" id="item-berry" onclick="selectSeed('berry', 15, '🍓')">
-            <div><b>🍓 Altın Çilek</b><br><small>Süre: 40s | Satış: 40 🪙</small></div>
-            <span class="price">15 🪙</span>
-        </div>
-
-        <!-- REKLAM ALANI -->
-        <div class="ad-box">
-            <div style="font-size: 13px; font-weight: bold;">🧪 Reklam İzle & Gübre Al</div>
-            <button class="ad-btn" onclick="watchRewardAd()">📺 Video İzle (+1 Gübre)</button>
+        <div class="market-row" id="seed-berry" onclick="changeActiveSeed('berry', 15, '🍓')">
+            <div><b>🍓 Altın Çilek</b> <small>(Süre: 40s | Satış: 40 🪙)</small></div>
+            <span class="badge">15 🪙</span>
         </div>
     </div>
 
+    <!-- 📺 SIFIR HATA REKLAM ALANI -->
+    <div class="ad-zone">
+        <div style="font-size: 13px; font-weight: bold;">🧪 Bitkileri Anında Büyüt</div>
+        <button class="ad-trigger" onclick="runRewardAdSim()">📺 Reklam İzle (+1 Gübre Al)</button>
+    </div>
 </div>
 
 <script>
+    // Global Değişkenler
     let balance = 15;
     let fertilizer = 1;
-    let selectedSeed = 'tomato';
-    let seedCost = 3;
-    let seedEmoji = '🍅';
+    let activeSeedType = 'tomato';
+    let activeSeedCost = 3;
+    let activeSeedEmoji = '🍅';
 
-    const plantTypes = {
+    const library = {
         tomato: { name: 'Domates', time: 6, sell: 6, emoji: '🍅' },
         pepper: { name: 'Biber', time: 15, sell: 15, emoji: '🫑' },
         berry: { name: 'Altın Çilek', time: 40, sell: 40, emoji: '🍓' }
     };
 
-    let plots = [{status:'empty', plant:null, timeLeft:0, interval:null},{status:'empty', plant:null, timeLeft:0, interval:null},{status:'empty', plant:null, timeLeft:0, interval:null},{status:'empty', plant:null, timeLeft:0, interval:null}];
+    let plotsData = [
+        { status: 'empty', plant: null, timeLeft: 0, timer: null },
+        { status: 'empty', plant: null, timeLeft: 0, timer: null },
+        { status: 'empty', plant: null, timeLeft: 0, timer: null },
+        { status: 'empty', plant: null, timeLeft: 0, timer: null }
+    ];
 
-    // 🚀 SAYFA DEĞİŞTİRME MEKANİZMALARI
-    function openMarketPage() {
-        document.getElementById('page-farm').style.display = 'none';    // Tarlayı tamamen gizle
-        document.getElementById('page-market').style.display = 'block'; // Yeni market sayfasını aç
+    // Tohum Değiştirme Sistemi (Kilitlenme İhtimali Sıfır)
+    function changeActiveSeed(type, cost, emoji) {
+        activeSeedType = type;
+        activeSeedCost = cost;
+        activeSeedEmoji = emoji;
+        
+        document.querySelectorAll('.market-row').forEach(r => r.classList.remove('active-seed'));
+        document.getElementById('seed-' + type).classList.add('active-seed');
+        document.getElementById('ui-seed').innerText = emoji + " " + library[type].name;
     }
 
-    function closeMarketPage() {
-        document.getElementById('page-market').style.display = 'none'; // Market sayfasını gizle
-        document.getElementById('page-farm').style.display = 'block';   // Tarlayı geri getir
-    }
-
-    function selectSeed(type, cost, emoji) {
-        selectedSeed = type;
-        seedCost = cost;
-        seedEmoji = emoji;
-        document.querySelectorAll('.market-item').forEach(r => r.classList.remove('selected'));
-        document.getElementById('item-' + type).classList.add('selected');
-        document.getElementById('selected-seed-txt').innerText = emoji + " " + plantTypes[type].name;
-    }
-
-    function interactPlot(index) {
-        let plot = plots[index];
-        let plotEl = document.getElementById('plot-' + index);
-        let textEl = document.getElementById('text-' + index);
+    // Tarla Etkileşimi
+    function handlePlotClick(index) {
+        let plot = plotsData[index];
+        let plotElement = document.getElementById('plot-' + index);
+        let textElement = document.getElementById('text-' + index);
 
         if (plot.status === 'empty') {
-            if (balance >= seedCost) {
-                balance -= seedCost;
-                updateUI();
+            if (balance >= activeSeedCost) {
+                balance -= activeSeedCost;
+                refreshUI();
 
                 plot.status = 'growing';
-                plot.plant = plantTypes[selectedSeed];
+                plot.plant = library[activeSeedType];
                 plot.timeLeft = plot.plant.time;
-                plotEl.innerHTML = "🌱<br><span id='text-"+index+"'>" + plot.timeLeft + "s</span>";
+                plotElement.innerHTML = "🌱<br><span id='text-" + index + "'>" + plot.timeLeft + "s</span>";
 
-                plot.interval = setInterval(() => {
+                plot.timer = setInterval(() => {
                     plot.timeLeft--;
-                    let txtNode = document.getElementById('text-' + index);
-                    if (txtNode) txtNode.innerText = plot.timeLeft + "s";
+                    let liveText = document.getElementById('text-' + index);
+                    if (liveText) liveText.innerText = plot.timeLeft + "s";
 
                     if (plot.timeLeft <= 0) {
-                        clearInterval(plot.interval);
+                        clearInterval(plot.timer);
                         plot.status = 'ready';
-                        plotEl.classList.add('ready');
-                        plotEl.innerHTML = plot.plant.emoji + "<br><b>HASAT ET</b>";
+                        plotElement.classList.add('ready');
+                        plotElement.innerHTML = plot.plant.emoji + "<br><b>HASAT ET</b>";
                     }
                 }, 1000);
-            } else { alert("Yetersiz bakiye! Tohum alamazsın."); }
+            } else {
+                alert("Yetersiz bakiye! Tohum alamazsınız.");
+            }
         } 
         else if (plot.status === 'growing' && fertilizer > 0) {
             fertilizer--;
-            clearInterval(plot.interval);
+            clearInterval(plot.timer);
             plot.status = 'ready';
-            plotEl.classList.add('ready');
-            plotEl.innerHTML = plot.plant.emoji + "<br><b>HASAT ET</b>";
-            updateUI();
+            plotElement.classList.add('ready');
+            plotElement.innerHTML = plot.plant.emoji + "<br><b>HASAT ET</b>";
+            refreshUI();
         }
         else if (plot.status === 'ready') {
             balance += plot.plant.sell;
             plot.status = 'empty';
             plot.plant = null;
-            plotEl.classList.remove('ready');
-            plotEl.innerHTML = "🟫<br><span>Boş Toprak</span>";
-            updateUI();
+            plotElement.classList.remove('ready');
+            plotElement.innerHTML = "🟫<br><span id='text-" + index + "'>Boş Toprak</span>";
+            refreshUI();
         }
     }
 
-    function updateUI() {
+    function refreshUI() {
+        document.getElementById('ui-balance').innerText = balance;
+        document.getElementById('ui-fert').innerText = fertilizer;
+    }
+
+    // Reklam Simülatörü
+    function runRewardAdSim() {
+        alert("Reklam yükleniyor... 3 saniye bekleyin.");
+        setTimeout(() => {
+            fertilizer++;
+            refreshUI();
+            alert("Harika! Reklam başarıyla izlendi ve envanterine 1 adet Süper Gübre (🧪) eklendi.");
+        }, 3000);
+    }
+
+    // İlk Çalıştırma
+    refreshUI();
+</script>
+</body>
+</html>
+
