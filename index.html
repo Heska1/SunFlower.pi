@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pi Çiftliği Kararlı Sürüm</title>
+    <title>Pi Çiftliği - Gübre Güncellemesi</title>
     <style>
         body {
             font-family: sans-serif;
@@ -45,13 +45,17 @@
             cursor: pointer;
             border: 3px solid #3d2a1f;
             font-weight: bold;
+            transition: background 0.2s;
+        }
+        .farm-plot.growing {
+            background: #795548;
+            border-color: #ff9800;
         }
         .farm-plot.ready {
             background: #27ae60;
             border-color: #2ecc71;
         }
         
-        /* 🛒 EKRANDA SABİT DURAN VE ASLA KİLİTLENMEYEN MARKET ALANI */
         .market-panel {
             background: #243447;
             border: 2px solid #f1c40f;
@@ -82,8 +86,6 @@
             font-weight: bold;
             font-size: 13px;
         }
-
-        /* 📺 GARANTİLİ REKLAM ALANI */
         .ad-zone {
             background: #c0392b;
             padding: 12px;
@@ -106,7 +108,7 @@
 <body>
 
 <div class="game-wrapper">
-    <h2>🚜 Pi Çiftliği v6</h2>
+    <h2>🚜 Pi Çiftliği v7</h2>
     
     <div class="stats-panel">
         <div>Bakiye: <b id="ui-balance" style="color:#f1c40f;">15</b> 🪙</div>
@@ -114,6 +116,7 @@
             Süper Gübre: <b id="ui-fert">1</b> 🧪 | 
             Ekilmeye Hazır: <b id="ui-seed" style="color:#f1c40f;">🍅 Domates</b>
         </div>
+        <div style="font-size: 11px; color: #aaa; margin-top: 5px;">ℹ️ Büyüyen bitkiye tıklayarak 🧪 gübre kullanabilirsin!</div>
     </div>
 
     <!-- TARLALARIMIZ -->
@@ -124,7 +127,6 @@
         <div class="farm-plot" id="plot-3" onclick="handlePlotClick(3)">🟫<br><span id="text-3">Boş Toprak</span></div>
     </div>
 
-    <!-- 🛒 BUTON GEREKTİRMEYEN DOĞRUDAN SEÇİMLİ MARKET -->
     <div class="market-panel">
         <h4 style="margin: 0 0 5px 0; text-align: center; color: #f1c40f;">🛒 Ekeceğin Tohumu Alttan Seç:</h4>
         
@@ -144,7 +146,6 @@
         </div>
     </div>
 
-    <!-- 📺 SIFIR HATA REKLAM ALANI -->
     <div class="ad-zone">
         <div style="font-size: 13px; font-weight: bold;">🧪 Bitkileri Anında Büyüt</div>
         <button class="ad-trigger" onclick="runRewardAdSim()">📺 Reklam İzle (+1 Gübre Al)</button>
@@ -152,7 +153,6 @@
 </div>
 
 <script>
-    // Global Değişkenler
     let balance = 15;
     let fertilizer = 1;
     let activeSeedType = 'tomato';
@@ -172,7 +172,6 @@
         { status: 'empty', plant: null, timeLeft: 0, timer: null }
     ];
 
-    // Tohum Değiştirme Sistemi (Kilitlenme İhtimali Sıfır)
     function changeActiveSeed(type, cost, emoji) {
         activeSeedType = type;
         activeSeedCost = cost;
@@ -183,12 +182,12 @@
         document.getElementById('ui-seed').innerText = emoji + " " + library[type].name;
     }
 
-    // Tarla Etkileşimi
+    // Tıklama Mantığı
     function handlePlotClick(index) {
         let plot = plotsData[index];
         let plotElement = document.getElementById('plot-' + index);
-        let textElement = document.getElementById('text-' + index);
 
+        // 1. DURUM: TARLA BOŞSA (Ekim Yap)
         if (plot.status === 'empty') {
             if (balance >= activeSeedCost) {
                 balance -= activeSeedCost;
@@ -197,6 +196,7 @@
                 plot.status = 'growing';
                 plot.plant = library[activeSeedType];
                 plot.timeLeft = plot.plant.time;
+                plotElement.classList.add('growing');
                 plotElement.innerHTML = "🌱<br><span id='text-" + index + "'>" + plot.timeLeft + "s</span>";
 
                 plot.timer = setInterval(() => {
@@ -207,22 +207,33 @@
                     if (plot.timeLeft <= 0) {
                         clearInterval(plot.timer);
                         plot.status = 'ready';
+                        plotElement.classList.remove('growing');
                         plotElement.classList.add('ready');
                         plotElement.innerHTML = plot.plant.emoji + "<br><b>HASAT ET</b>";
                     }
                 }, 1000);
             } else {
-                alert("Yetersiz bakiye! Tohum alamazsınız.");
+                alert("Yetersiz bakiye!");
             }
         } 
-        else if (plot.status === 'growing' && fertilizer > 0) {
-            fertilizer--;
-            clearInterval(plot.timer);
-            plot.status = 'ready';
-            plotElement.classList.add('ready');
-            plotElement.innerHTML = plot.plant.emoji + "<br><b>HASAT ET</b>";
-            refreshUI();
+        // 🚀 2. DURUM: BİTKİ BÜYÜYORSA VE GÜBRE VARSA (Anında Büyüt)
+        else if (plot.status === 'growing') {
+            if (fertilizer > 0) {
+                fertilizer--; // 1 gübre harca
+                clearInterval(plot.timer); // Zaman sayacını durdur
+                
+                plot.status = 'ready';
+                plot.timeLeft = 0;
+                
+                plotElement.classList.remove('growing');
+                plotElement.classList.add('ready');
+                plotElement.innerHTML = plot.plant.emoji + "<br><b>HASAT ET</b>";
+                refreshUI();
+            } else {
+                alert("Elinizde Süper Gübre (🧪) yok! Alttaki butondan reklam izleyerek kazanabilirsiniz.");
+            }
         }
+        // 3. DURUM: BİTKİ HAZIRSA (Hasat Et)
         else if (plot.status === 'ready') {
             balance += plot.plant.sell;
             plot.status = 'empty';
@@ -238,7 +249,6 @@
         document.getElementById('ui-fert').innerText = fertilizer;
     }
 
-    // Reklam Simülatörü
     function runRewardAdSim() {
         alert("Reklam yükleniyor... 3 saniye bekleyin.");
         setTimeout(() => {
@@ -248,9 +258,7 @@
         }, 3000);
     }
 
-    // İlk Çalıştırma
     refreshUI();
 </script>
 </body>
 </html>
-
