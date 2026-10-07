@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi Çiftliği Pro v3</title>
+    <title>Pi Çiftliği Pro v4</title>
     <!-- Pi Network SDK -->
     <script src="https://minepi.com"></script>
     <style>
@@ -32,6 +32,8 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            padding-bottom: 80px; /* Alttaki market butonu için boşluk */
         }
         .profile-bar {
             display: flex;
@@ -99,39 +101,6 @@
         }
         .progress-bar { width: 0%; height: 100%; background: #3498db; transition: width 1s linear; }
 
-        /* Yeni Tohum Marketi (Altta Bulunan Panel) */
-        .market-section {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .market-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #f1c40f; text-align: left; margin-bottom: 10px; font-weight: bold; }
-        .market-grid {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-        }
-        .market-item {
-            flex: 1;
-            min-width: 100px;
-            background: rgba(0,0,0,0.3);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .market-item.selected {
-            border-color: #f1c40f;
-            background: rgba(241, 196, 15, 0.1);
-        }
-        .item-emoji { font-size: 24px; display: block; }
-        .item-name { font-size: 12px; font-weight: bold; margin: 3px 0; }
-        .item-price { font-size: 11px; color: #2ecc71; font-weight: bold; }
-
         /* Reklam Buton Alanı */
         .ad-banner {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
@@ -139,6 +108,7 @@
             padding: 15px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            margin-bottom: 20px;
         }
         .ad-btn {
             background: #ffffff;
@@ -153,14 +123,121 @@
             margin-top: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .ad-btn:active { transform: scale(0.95); }
+
+        /* 🛒 Sabit Alt Market Butonu */
+        .market-toggle-btn {
+            background: #f1c40f;
+            color: #1a252f;
+            border: none;
+            padding: 12px;
+            width: 90%;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: auto;
+        }
+        .market-toggle-btn:active { transform: scale(0.95); }
+
+        /* 📦 AÇILIR MARKET SAYFASI (MODAL SCREEN) */
+        .market-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .market-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .market-popup {
+            background: #2c3e50;
+            border: 2px solid #f1c40f;
+            width: 85%;
+            max-width: 380px;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        .market-overlay.open .market-popup {
+            transform: scale(1);
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+        .close-market-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .market-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .market-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .market-row.selected {
+            border-color: #f1c40f;
+            background: rgba(241, 196, 15, 0.1);
+        }
+        .row-left { display: flex; align-items: center; gap: 12px; }
+        .row-emoji { font-size: 32px; }
+        .row-title { font-weight: bold; font-size: 14px; text-align: left; }
+        .row-desc { font-size: 11px; color: #bdc3c7; }
+        .row-price { background: #2ecc71; color: white; padding: 4px 10px; border-radius: 10px; font-weight: bold; font-size: 13px; }
+        
+        .selected-indicator {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #f1c40f;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div class="profile-bar">
-        <span style="font-weight: bold; font-size: 18px;">🚜 PiFarm v3</span>
+        <span style="font-weight: bold; font-size: 18px;">🚜 PiFarm v4</span>
         <div class="user-tag" id="username">Yükleniyor...</div>
     </div>
 
@@ -193,67 +270,14 @@
         </div>
     </div>
 
-    <!-- 🛒 Yenilenen Çiftçi Marketi (Altta Sabit) -->
-    <div class="market-section">
-        <div class="market-title">🛒 Tohum Marketi</div>
-        <div class="market-grid">
-            <div class="market-item selected" id="item-tomato" onclick="selectSeed('tomato', 3, '🍅')">
-                <span class="item-emoji">🍅</span>
-                <span class="item-name">Domates</span>
-                <span class="item-price">3 🪙</span>
-            </div>
-            <div class="market-item" id="item-pepper" onclick="selectSeed('pepper', 7, '🫑')">
-                <span class="item-emoji">🫑</span>
-                <span class="item-name">Biber</span>
-                <span class="item-price">7 🪙</span>
-            </div>
-            <div class="market-item" id="item-berry" onclick="selectSeed('berry', 15, '🍓')">
-                <span class="item-emoji">🍓</span>
-                <span class="item-name">Altın Çilek</span>
-                <span class="item-price">15 🪙</span>
-            </div>
-        </div>
-    </div>
-
     <div class="ad-banner">
         <div style="font-size:14px; font-weight:bold;">🧪 Laboratuvar Takviyesi</div>
-        <div style="font-size:11px; margin-top:2px; opacity:0.9;">Kısa bir video izle, bitkilerini anında hasat edecek Süper Gübre kazan!</div>
         <button class="ad-btn" onclick="watchRewardAd()">📺 Ödüllü Reklam İzle</button>
     </div>
+
+    <!-- 🛒 Sabit Alt Market Butonu -->
+    <button class="market-toggle-btn" onclick="toggleMarket(true)">🛒 Tohum Marketini Aç</button>
 </div>
 
-<script>
-    // Pi Platform Güvenli Başlatma
-    try {
-        Pi.init({ version: "2.0" });
-        Pi.authenticate(['username'], (p) => console.log(p))
-          .then(auth => document.getElementById('username').innerText = auth.user.username)
-          .catch(() => document.getElementById('username').innerText = "Test Modu");
-    } catch (e) {
-        document.getElementById('username').innerText = "Yerel Mod";
-    }
-
-    // Oyun Verileri
-    let balance = 15;
-    let fertilizer = 1;
-    let selectedSeed = 'tomato';
-    let seedCost = 3;
-    let seedEmoji = '🍅';
-
-    const plantTypes = {
-        tomato: { time: 8, sell: 6, emoji: '🍅' },
-        pepper: { time: 18, sell: 15, emoji: '🫑' },
-        berry: { time: 45, sell: 40, emoji: '🍓' }
-    };
-
-    let plots = [
-        { status: 'empty', plant: null, maxTime: 0, timeLeft: 0, interval: null },
-        { status: 'empty', plant: null, maxTime: 0, timeLeft: 0, interval: null },
-        { status: 'empty', plant: null, maxTime: 0, timeLeft: 0, interval: null },
-        { status: 'empty', plant: null, maxTime: 0, timeLeft: 0, interval: null }
-    ];
-
-    function selectSeed(type, cost, emoji) {
-        selectedSeed = type;
-        seedCost = cost;
-        seedEmoji = emoji;
+<!-- 📦 AÇILIR SAYFA APARATI (MODAL POPUP) -->
+<div class="market-overlay" id="marketOverlay">
