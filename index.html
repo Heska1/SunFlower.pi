@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Çiftliği (Pi Farm)</title>
+    <!-- Pi Network Resmi SDK'sı -->
+    <script src="https://minepi.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #7fc35a, #4a8522);
+            color: #fff;
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+        }
+        .header {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .stats {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .farm-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 400px;
+            margin: auto;
+        }
+        .plot {
+            background: #8b5a2b;
+            border: 4px solid #5c3a1a;
+            border-radius: 12px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+        .plot.ready { background: #a0522d; border-color: #ffd700; }
+        .plant-emoji { font-size: 40px; margin-bottom: 5px; }
+        .timer { font-size: 12px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 5px; }
+        
+        .market {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .seed-btn {
+            background: #ff9f43;
+            border: none;
+            padding: 8px 12px;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .seed-btn.active { background: #10ac84; box-shadow: 0 0 10px #fff; }
+        
+        .ad-section {
+            margin-top: 15px;
+            background: #222f3e;
+            padding: 12px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: auto;
+        }
+        .ad-btn {
+            background: #ee5253;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2>🚜 Pi Çiftliği</h2>
+    <div id="username">Pi ile bağlanılıyor...</div>
+    <div class="stats">Cüzdan: <span id="balance">10</span> 🪙 Pi Lirası</div>
+    <div style="margin-top: 5px; color: #ffffd0;">Süper Gübre Stoğu: <span id="fertilizer-count">1</span> 🧪</div>
+</div>
+
+<div class="market">
+    <h3>🌱 Tohum Çantası (Ekmek istediğini seç)</h3>
+    <button class="seed-btn active" id="seed-tomato" onclick="selectSeed('tomato', 2, '🍅')">🍅 Domates (Maliyet: 2 🪙)</button>
+    <button class="seed-btn" id="seed-pepper" onclick="selectSeed('pepper', 5, '🫑')">🫑 Biber (Maliyet: 5 🪙)</button>
+    <button class="seed-btn" id="seed-berry" onclick="selectSeed('berry', 12, '🍓')">🍓 Altın Çilek (Maliyet: 12 🪙)</button>
+</div>
+
+<!-- 4 Adet Tarla Parseli -->
+<div class="farm-grid">
+    <div class="plot" id="plot-0" onclick="interactPlot(0)">🟫<br>Boş Tarla</div>
+    <div class="plot" id="plot-1" onclick="interactPlot(1)">🟫<br>Boş Tarla</div>
+    <div class="plot" id="plot-2" onclick="interactPlot(2)">🟫<br>Boş Tarla</div>
+    <div class="plot" id="plot-3" onclick="interactPlot(3)">🟫<br>Boş Tarla</div>
+</div>
+
+<div class="ad-section">
+    <p>📺 Bitkilerin anında büyüsün ister misin?</p>
+    <button class="ad-btn" onclick="watchRewardAd()">Reklam İzle (+1 Süper Gübre Al)</button>
+</div>
+
+<script>
+    // Pi SDK Başlatma
+    Pi.init({ version: "2.0" });
+
+    // Oyun Değişkenleri
+    let balance = 10;
+    let fertilizer = 1;
+    let selectedSeed = 'tomato';
+    let seedCost = 2;
+    let seedEmoji = '🍅';
+
+    // Bitki Özellikleri (Büyüme Süresi Saniye, Satış Fiyatı)
+    const plantTypes = {
+        tomato: { time: 10, sell: 5 },
+        pepper: { time: 25, sell: 12 },
+        berry: { time: 60, sell: 35 }
+    };
+
+    // Tarlaların Durumu
+    let plots = [
+        { status: 'empty', plant: null, timeLeft: 0, interval: null },
+        { status: 'empty', plant: null, timeLeft: 0, interval: null },
+        { status: 'empty', plant: null, timeLeft: 0, interval: null },
+        { status: 'empty', plant: null, timeLeft: 0, interval: null }
+    ];
+
+    // Pi Kimlik Doğrulama
+    async function initPi() {
+        try {
+            const auth = await Pi.authenticate(['username'], (p) => console.log(p));
+            document.getElementById('username').innerText = `Çiftçi: ${auth.user.username}`;
+        } catch (e) {
+            document.getElementById('username').innerText = "Mod: Misafir Çiftçi (Tarayıcı Dışı)";
+        }
+    }
+
+    // Tohum Değiştirme Sistemi
+    function selectSeed(type, cost, emoji) {
+        selectedSeed = type;
+        seedCost = cost;
+        seedEmoji = emoji;
+        document.querySelectorAll('.seed-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`seed-${type}`).classList.add('active');
+    }
+
+    // Tarlaya Tıklama Olayı (Ekim, Hasat veya Gübreleme)
+    function interactPlot(index) {
+        let plot = plots[index];
+        let plotEl = document.getElementById(`plot-${index}`);
+
+        if (plot.status === 'empty') {
+            // EKİM YAPMA
+            if (balance >= seedCost) {
+                balance -= seedCost;
+                updateUI();
+                
+                plot.status = 'growing';
+                plot.plant = selectedSeed;
+                plot.timeLeft = plantTypes[selectedSeed].time;
+                
+                plotEl.innerHTML = `<span class="plant-emoji">🌱</span><br><span class="timer">${plot.timeLeft}s</span>`;
+                
+                // Zaman Sayacı Başlatma
+                plot.interval = setInterval(() => {
+                    plot.timeLeft--;
+                    if (plot.timeLeft <= 0) {
+                        clearInterval(plot.interval);
+                        plot.status = 'ready';
+                        plotEl.classList.add('ready');
+                        plotEl.innerHTML = `<span class="plant-emoji">${seedEmoji}</span><br><b>HASAT ET!</b>`;
+                    } else {
+                        plotEl.querySelector('.timer').innerText = plot.timeLeft + 's';
+                    }
+                }, 1000);
+            } else {
+                alert("Yetersiz Pi Lirası! Tohum alamazsınız.");
+            }
+        } 
+        else if (plot.status === 'growing' && fertilizer > 0) {
+            // GÜBRE KULLANARAK ANINDA BÜYÜTME
+            fertilizer--;
+            clearInterval(plot.interval);
+            plot.status = 'ready';
+            plot.timeLeft = 0;
+            plotEl.classList.add('ready');
+            
+            // Hangi bitki ekildiyse onun emojisini bulalım
+            let currentEmoji = selectedSeed === 'tomato' ? '🍅' : (selectedSeed === 'pepper' ? '🫑' : '🍓');
+            plotEl.innerHTML = `<span class="plant-emoji">${currentEmoji}</span><br><b>HASAT ET!</b>`;
+            updateUI();
+        }
+        else if (plot.status === 'ready') {
+            // HASAT ETME VE SATMA
+            let profit = plantTypes[plot.plant].sell;
+            balance += profit;
+            
+            // Tarlayı sıfırla
+            clearInterval(plot.interval);
+            plot.status = 'empty';
+            plot.plant = null;
+            plotEl.classList.remove('ready');
+            plotEl.innerHTML = `🟫<br>Boş Tarla`;
+            updateUI();
+        }
+    }
+
+    // Arayüzü Güncelleme
+    function updateUI() {
+        document.getElementById('balance').innerText = balance;
+        document.getElementById('fertilizer-count').innerText = fertilizer;
+    }
+
+    // 📺 REKLAM İZLEME VE ÖDÜL SİSTEMİ (Pi Ad Network Yapısı)
+    function watchRewardAd() {
+        alert("Reklam simüle ediliyor... (Reklam 5 saniye içinde başarıyla izlendi)");
+        
+        // Gerçek Pi Browser'da buraya Pi Ad SDK'sının video çağırma fonksiyonu gelir.
+        // Örn: Pi.Ads.showRewardVideo().then(...)
+        
+        setTimeout(() => {
+            fertilizer += 1;
+            updateUI();
+            alert("Harika! Reklamı izledin ve 1 adet 'Süper Gübre' kazandın. Büyümekte olan bir tarlaya tıklayarak anında hasat edebilirsin!");
+        }, 500);
+    }
+
+    // Oyunu Başlat
+    initPi();
+    updateUI();
+</script>
+
+</body>
+</html>
