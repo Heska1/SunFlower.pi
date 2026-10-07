@@ -3,181 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pi Çiftliği - Düzeltilmiş Sürüm</title>
+    <title>Pi Farm Kararlı Sürüm</title>
     <style>
-        body {
-            font-family: sans-serif;
-            background: #141d26;
-            color: #ffffff;
-            margin: 0;
-            padding: 10px;
-            text-align: center;
-        }
-        .game-wrapper {
-            max-width: 400px;
-            margin: auto;
-            background: #1f2d3d;
-            padding: 15px;
-            border-radius: 16px;
-            box-sizing: border-box;
-        }
-        .stats-panel {
-            background: #2c3e50;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 15px;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .farm-plot {
-            background: #5c4033;
-            height: 120px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 3px solid #3d2a1f;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        .farm-plot.growing { background: #795548; border-color: #ff9800; }
-        .farm-plot.ready { background: #27ae60; border-color: #2ecc71; }
-
-        .fertilizer-panel {
-            background: #192734;
-            border: 2px solid #3498db;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .fert-selector {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .fert-card {
-            flex: 1;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid transparent;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .fert-card.active {
-            border-color: #3498db;
-            background: rgba(52, 152, 219, 0.15);
-        }
-        .fert-emoji { font-size: 26px; display: block; }
-        .fert-title { font-size: 13px; font-weight: bold; margin-top: 3px; }
+        body { font-family: Arial, sans-serif; background: #141d26; color: #ffffff; text-align: center; margin: 0; padding: 10px; }
+        .wrapper { max-width: 400px; margin: auto; background: #1f2d3d; padding: 15px; border-radius: 16px; box-sizing: border-box; }
+        .panel { background: #2c3e50; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 15px; }
         
-        .ad-mini-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px;
-            font-size: 11px;
-            font-weight: bold;
-            border-radius: 50px;
-            margin-top: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
+        /* Tarlalarımız */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .plot { background: #5c4033; height: 110px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid #3d2a1f; font-weight: bold; }
+        .plot.growing { background: #795548; border-color: #ff9800; }
+        .plot.ready { background: #27ae60; border-color: #2ecc71; }
+        
+        /* Gübre Çantası */
+        .bag { background: #192734; border: 2px solid #3498db; border-radius: 12px; padding: 10px; margin-bottom: 15px; text-align: left; }
+        .bag-grid { display: flex; gap: 10px; margin-top: 5px; }
+        .bag-card { flex: 1; background: rgba(255,255,255,0.05); border: 2px solid transparent; border-radius: 8px; padding: 8px; text-align: center; cursor: pointer; }
+        .bag-card.active { border-color: #3498db; background: rgba(52, 152, 219, 0.2); }
+        .ad-btn { background: #e74c3c; color: white; border: none; padding: 5px; font-size: 11px; font-weight: bold; border-radius: 4px; margin-top: 5px; cursor: pointer; width: 100%; }
 
-        .market-panel {
-            background: #243447;
-            border: 2px solid #f1c40f;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-            text-align: left;
-        }
-        .market-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .market-row.active-seed {
-            border-color: #f1c40f;
-            background: rgba(241,196,15,0.15);
-        }
-        .badge { background: #2ecc71; padding: 3px 8px; border-radius: 5px; font-weight: bold; font-size: 13px; }
+        /* Tohum Marketi */
+        .market { background: #243447; border: 2px solid #f1c40f; border-radius: 12px; padding: 10px; text-align: left; }
+        .market-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px; margin: 6px 0; border-radius: 6px; cursor: pointer; border: 2px solid transparent; }
+        .market-row.active-seed { border-color: #f1c40f; background: rgba(241,196,15,0.15); }
+        .badge { background: #2ecc71; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<div class="game-wrapper">
-    <h2>🚜 Pi Çiftliği v10</h2>
+<div class="wrapper">
+    <h2>🚜 Pi Çiftliği v11</h2>
     
-    <div class="stats-panel">
+    <div class="panel">
         <div>Bakiye: <b id="ui-balance" style="color:#f1c40f;">15</b> 🪙</div>
-        <div style="font-size: 12px; margin-top: 4px; color: #bdc3c7;">
-            Ekilmeye Hazır: <b id="ui-seed" style="color:#f1c40f;">🍅 Domates</b>
-        </div>
+        <div style="font-size: 12px; margin-top: 3px; color: #bdc3c7;">Seçili Tohum: <b id="ui-seed" style="color:#f1c40f;">Domates</b></div>
     </div>
 
-    <!-- GÜBRE PANELİ -->
-    <div class="fertilizer-panel">
-        <div style="font-size: 13px; font-weight: bold; color: #3498db; text-align: center;">🎒 Aktif Gübre Seç ve Üret:</div>
-        <div class="fert-selector">
-            <div class="fert-card active" id="fert-normal" onclick="changeActiveFertilizer('normal')">
-                <div>
-                    <span class="fert-emoji">🫙</span>
-                    <span class="fert-title">Normal Gübre</span>
-                    <div style="font-size: 11px; margin-top: 2px;">Stok: <b id="ui-fert-normal">1</b></div>
-                </div>
-                <button class="ad-mini-btn" onclick="watchAdForFertilizer('normal', event)">📺 Reklam (<span id="ui-progress-normal">0/2</span>)</button>
+    <!-- 🎒 GÜBRE ÇANTASI -->
+    <div class="bag">
+        <div style="font-size: 12px; font-weight: bold; color: #3498db; text-align: center;">🎒 Kullanılacak Gübreyi Seç:</div>
+        <div class="bag-grid">
+            <div class="bag-card active" id="f-normal" onclick="setFertilizer('normal')">
+                <span>🫙 Normal</span>
+                <div>Stok: <b id="ui-stock-n">1</b></div>
+                <button class="ad-btn" onclick="watchAd('normal', event)">📺 Reklam (<span id="ui-prog-n">0/2</span>)</button>
             </div>
-            
-            <div class="fert-card" id="fert-super" onclick="changeActiveFertilizer('super')">
-                <div>
-                    <span class="fert-emoji">🧪</span>
-                    <span class="fert-title">Süper Gübre</span>
-                    <div style="font-size: 11px; margin-top: 2px;">Stok: <b id="ui-fert-super">0</b></div>
-                </div>
-                <button class="ad-mini-btn" onclick="watchAdForFertilizer('super', event)">📺 Reklam (<span id="ui-progress-super">0/4</span>)</button>
+            <div class="bag-card" id="f-super" onclick="setFertilizer('super')">
+                <span>🧪 Süper</span>
+                <div>Stok: <b id="ui-stock-s">0</b></div>
+                <button class="ad-btn" onclick="watchAd('super', event)">📺 Reklam (<span id="ui-prog-s">0/4</span>)</button>
             </div>
         </div>
     </div>
 
     <!-- TARLALARIMIZ -->
-    <div class="grid-container">
-        <div class="farm-plot" id="plot-0" onclick="handlePlotClick(0)">🟫<br><span id="text-0">Boş Toprak</span></div>
-        <div class="farm-plot" id="plot-1" onclick="handlePlotClick(1)">🟫<br><span id="text-1">Boş Toprak</span></div>
-        <div class="farm-plot" id="plot-2" onclick="handlePlotClick(2)">🟫<br><span id="text-2">Boş Toprak</span></div>
-        <div class="farm-plot" id="plot-3" onclick="handlePlotClick(3)">🟫<br><span id="text-3">Boş Toprak</span></div>
+    <div class="grid">
+        <div class="plot" id="plot-0" onclick="clickPlot(0)">🟫<br><span id="text-0">Boş Toprak</span></div>
+        <div class="plot" id="plot-1" onclick="clickPlot(1)">🟫<br><span id="text-1">Boş Toprak</span></div>
+        <div class="plot" id="plot-2" onclick="clickPlot(2)">🟫<br><span id="text-2">Boş Toprak</span></div>
+        <div class="plot" id="plot-3" onclick="clickPlot(3)">🟫<br><span id="text-3">Boş Toprak</span></div>
     </div>
 
-    <!-- MARKET PANELİ -->
-    <div class="market-panel">
-        <h4 style="margin: 0 0 5px 0; text-align: center; color: #f1c40f;">🛒 Ekeceğin Tohumu Alttan Seç:</h4>
-        <div class="market-row active-seed" id="seed-tomato" onclick="changeActiveSeed('tomato', 3, '🍅')">
-            <div><b>🍅 Domates</b> <small>(Süre: 8s | Satış: 6 🪙)</small></div>
+    <!-- TOHUM MARKETİ -->
+    <div class="market">
+        <h4 style="margin: 0 0 5px 0; text-align: center; color: #f1c40f;">🛒 Ekeceğin Tohumu Seç:</h4>
+        <div class="market-row active-seed" id="s-tomato" onclick="setSeed('tomato', 3, '🍅', 8, 6)">
+            <div><b>🍅 Domates</b> <small>(8s | Satış: 6 🪙)</small></div>
             <span class="badge">3 🪙</span>
         </div>
-        <div class="market-row" id="seed-pepper" onclick="changeActiveSeed('pepper', 7, '🫑')">
-            <div><b>🫑 Biber</b> <small>(Süre: 18s | Satış: 15 🪙)</small></div>
+        <div class="market-row" id="s-pepper" onclick="setSeed('pepper', 7, '🫑', 18, 15)">
+            <div><b>🫑 Biber</b> <small>(18s | Satış: 15 🪙)</small></div>
             <span class="badge">7 🪙</span>
         </div>
-        <div class="market-row" id="seed-berry" onclick="changeActiveSeed('berry', 15, '🍓')">
-            <div><b>🍓 Altın Çilek</b> <small>(Süre: 40s | Satış: 40 🪙)</small></div>
+        <div class="market-row" id="s-berry" onclick="setSeed('berry', 15, '🍓', 40, 40)">
+            <div><b>🍓 Altın Çilek</b> <small>(40s | Satış: 40 🪙)</small></div>
             <span class="badge">15 🪙</span>
         </div>
     </div>
@@ -185,81 +84,128 @@
 
 <script>
     let balance = 15;
-    let fertNormalCount = 1;
-    let fertSuperCount = 0;
-    let selectedFertilizer = 'normal';
+    let fertNormal = 1, fertSuper = 0;
+    let selectedFert = 'normal';
+    
+    let adProgN = 0, adProgS = 0;
 
-    let adProgressNormal = 0;
-    let adProgressSuper = 0;
-    const adTargetNormal = 2;
-    const adTargetSuper = 4;
+    let activeSeed = 'tomato';
+    let seedCost = 3;
+    let seedEmoji = '🍅';
+    let seedTime = 8;
+    let seedSell = 6;
 
-    let activeSeedType = 'tomato';
-    let activeSeedCost = 3;
-    let activeSeedEmoji = '🍅';
-
-    const library = {
-        tomato: { name: 'Domates', time: 8, sell: 6, emoji: '🍅' },
-        pepper: { name: 'Biber', time: 18, sell: 15, emoji: '🫑' },
-        berry: { name: 'Altın Çilek', time: 40, sell: 40, emoji: '🍓' }
-    };
-
-    let plotsData = [
-        { status: 'empty', plant: null, timeLeft: 0, timer: null },
-        { status: 'empty', plant: null, timeLeft: 0, timer: null },
-        { status: 'empty', plant: null, timeLeft: 0, timer: null },
-        { status: 'empty', plant: null, timeLeft: 0, timer: null }
+    let plots = [
+        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
+        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
+        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
+        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null }
     ];
 
-    function changeActiveSeed(type, cost, emoji) {
-        activeSeedType = type;
-        activeSeedCost = cost;
-        activeSeedEmoji = emoji;
+    function setSeed(type, cost, emoji, time, sell) {
+        activeSeed = type;
+        seedCost = cost;
+        seedEmoji = emoji;
+        seedTime = time;
+        seedSell = sell;
         document.querySelectorAll('.market-row').forEach(r => r.classList.remove('active-seed'));
-        document.getElementById('seed-' + type).classList.add('active-seed');
-        document.getElementById('ui-seed').innerText = emoji + " " + library[type].name;
+        document.getElementById('s-' + type).classList.add('active-seed');
+        document.getElementById('ui-seed').innerText = emoji + " " + type.toUpperCase();
     }
 
-    function changeActiveFertilizer(type) {
-        selectedFertilizer = type;
-        document.querySelectorAll('.fert-card').forEach(c => c.classList.remove('active'));
-        document.getElementById('fert-' + type).classList.add('active');
+    function setFertilizer(type) {
+        selectedFert = type;
+        document.querySelectorAll('.bag-card').forEach(c => c.classList.remove('active'));
+        document.getElementById('f-' + type).classList.add('active');
     }
 
-    function watchAdForFertilizer(type, event) {
+    function watchAd(type, event) {
         event.stopPropagation();
-        alert("Reklam yükleniyor... Lütfen bekleyin.");
+        alert("Reklam izleniyor...");
         setTimeout(() => {
             if (type === 'normal') {
-                adProgressNormal++;
-                if (adProgressNormal >= adTargetNormal) {
-                    adProgressNormal = 0;
-                    fertNormalCount++;
-                    alert("Tebrikler! 2 reklam izleme görevi bitti. 1 adet Normal Gübre (🫙) kazandınız!");
-                } else {
-                    alert("Reklam izlendi! Kalan reklam: " + (adTargetNormal - adProgressNormal));
-                }
-            } else if (type === 'super') {
-                adProgressSuper++;
-                if (adProgressSuper >= adTargetSuper) {
-                    adProgressSuper = 0;
-                    fertSuperCount++;
-                    alert("Muhteşem! 4 reklam izleme görevi bitti. 1 adet Süper Gübre (🧪) kazandınız!");
-                } else {
-                    alert("Reklam izlendi! Kalan reklam: " + (adTargetSuper - adProgressSuper));
-                }
+                adProgN++;
+                if (adProgN >= 2) { adProgN = 0; fertNormal++; }
+            } else {
+                adProgS++;
+                if (adProgS >= 4) { adProgS = 0; fertSuper++; }
             }
-            refreshUI();
-        }, 1500);
+            render();
+        }, 1000);
     }
 
-    function handlePlotClick(index) {
-        let plot = plotsData[index];
-        let plotElement = document.getElementById('plot-' + index);
+    function clickPlot(id) {
+        let p = plots[id];
+        let el = document.getElementById('plot-' + id);
+        let txt = document.getElementById('text-' + id);
 
-        // 1. BOŞ TOPRAĞA EKİM YAPMA (DÜZELTİLDİ)
-        if (plot.status === 'empty') {
-            if (balance >= activeSeedCost) {
-                balance -= activeSeedCost;
-                refreshUI();
+        if (p.status === 'empty') {
+            if (balance >= seedCost) {
+                balance -= seedCost;
+                
+                p.status = 'growing';
+                p.emoji = seedEmoji;
+                p.time = seedTime;
+                p.sell = seedSell;
+                
+                el.className = "plot growing";
+                txt.innerText = p.time + "s";
 
+                p.timer = setInterval(() => {
+                    p.time--;
+                    let liveTxt = document.getElementById('text-' + id);
+                    if (liveTxt) liveTxt.innerText = p.time + "s";
+
+                    if (p.time <= 0) {
+                        clearInterval(p.timer);
+                        p.status = 'ready';
+                        el.className = "plot ready";
+                        el.innerHTML = p.emoji + "<br><span id='text-" + id + "'>HASAT ET</span>";
+                    }
+                }, 1000);
+                render();
+            } else { alert("Yetersiz bakiye!"); }
+        } 
+        else if (p.status === 'growing') {
+            if (selectedFert === 'normal' && fertNormal > 0) {
+                fertNormal--;
+                p.time = Math.floor(p.time / 2);
+                if (p.time <= 0) {
+                    clearInterval(p.timer);
+                    p.status = 'ready';
+                    el.className = "plot ready";
+                    el.innerHTML = p.emoji + "<br><span id='text-" + id + "'>HASAT ET</span>";
+                } else {
+                    txt.innerText = p.time + "s";
+                }
+                render();
+            } 
+            else if (selectedFert === 'super' && fertSuper > 0) {
+                fertSuper--;
+                clearInterval(p.timer);
+                p.status = 'ready';
+                el.className = "plot ready";
+                el.innerHTML = p.emoji + "<br><span id='text-" + id + "'>HASAT ET</span>";
+                render();
+            } else { alert("Seçili gübreden elinizde kalmadı!"); }
+        }
+        else if (p.status === 'ready') {
+            balance += p.sell;
+            p.status = 'empty';
+            el.className = "plot";
+            el.innerHTML = "🟫<br><span id='text-" + id + "'>Boş Toprak</span>";
+            render();
+        }
+    }
+
+    function render() {
+        document.getElementById('ui-balance').innerText = balance;
+        document.getElementById('ui-stock-n').innerText = fertNormal;
+        document.getElementById('ui-stock-s').innerText = fertSuper;
+        document.getElementById('ui-prog-n').innerText = adProgN + "/2";
+        document.getElementById('ui-prog-s').innerText = adProgS + "/4";
+    }
+    render();
+</script>
+</body>
+</html>
