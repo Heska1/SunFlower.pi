@@ -7,7 +7,7 @@
     <style>
         :root {
             --bg-color: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.85);
+            --card-bg: #1e293b;
             --text-main: #f8fafc;
             --primary: #10b981;
             --secondary: #3b82f6;
@@ -15,46 +15,37 @@
         }
 
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: radial-gradient(circle at top, #1e293b, #0f172a); 
+            font-family: Arial, sans-serif; 
+            background: #0f172a; 
             color: var(--text-main); 
             margin: 0; 
             padding: 15px; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         .wrapper { 
             width: 100%;
-            max-width: 420px; 
+            max-width: 400px; 
             background: var(--card-bg); 
-            backdrop-filter: blur(12px);
             padding: 20px; 
-            border-radius: 24px; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
             box-sizing: border-box; 
         }
 
         h2 {
             margin: 0 0 15px 0;
             font-size: 24px;
-            letter-spacing: 1px;
-            background: linear-gradient(to right, #f59e0b, #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--accent);
         }
 
         .panel { 
-            background: rgba(15, 23, 42, 0.6); 
+            background: #0f172a; 
             padding: 12px; 
-            border-radius: 16px; 
-            margin-bottom: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px; 
+            margin-bottom: 15px; 
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -66,63 +57,60 @@
             align-items: center;
         }
 
-        .stat-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 2px; }
-        .stat-value { font-size: 18px; font-weight: bold; }
+        .stat-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; }
+        .stat-value { font-size: 18px; font-weight: bold; margin-top: 2px; }
 
         /* 🎒 FERTILIZER BAG */
         .bag { 
-            background: rgba(15, 23, 42, 0.4); 
-            border: 1.5px solid var(--secondary); 
-            border-radius: 18px; 
+            background: rgba(0,0,0,0.2); 
+            border: 2px solid var(--secondary); 
+            border-radius: 14px; 
             padding: 12px; 
-            margin-bottom: 20px; 
+            margin-bottom: 15px; 
         }
-        .bag-title { font-size: 12px; font-weight: bold; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center; }
-        .bag-grid { display: flex; gap: 12px; }
+        .bag-title { font-size: 12px; font-weight: bold; color: var(--secondary); text-transform: uppercase; margin-bottom: 8px; text-align: center; }
+        .bag-grid { display: flex; gap: 10px; }
         
         .bag-card { 
             flex: 1; 
-            background: rgba(30, 41, 59, 0.5); 
-            border: 2px solid transparent; 
-            border-radius: 14px; 
-            padding: 10px; 
-            cursor: pointer; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: #293548; 
+            border: 3px solid transparent; 
+            border-radius: 10px; 
+            padding: 8px; 
+            cursor: pointer;
             box-sizing: border-box;
+            position: relative;
+            z-index: 10;
         }
         .bag-card.active { 
             border-color: var(--secondary); 
-            background: rgba(59, 130, 246, 0.15);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+            background: #1e3a8a;
         }
         
-        /* İçindeki elementlerin tıklamayı engellemesini önlüyoruz */
-        .bag-card * { pointer-events: none; }
-        .bag-card .ad-btn { pointer-events: auto; } /* Reklam butonu hariç */
+        /* Tıklama Alanı Koruması */
+        .bag-card div, .bag-card span { pointer-events: none; }
 
         .ad-btn { 
             background: #ef4444; 
             color: white; 
             border: none; 
-            padding: 8px; 
+            padding: 6px; 
             font-size: 11px; 
             font-weight: bold; 
-            border-radius: 8px; 
-            margin-top: 8px; 
+            border-radius: 6px; 
+            margin-top: 6px; 
             cursor: pointer; 
             width: 100%;
-            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
-            box-sizing: border-box;
+            position: relative;
+            z-index: 20;
         }
 
         /* 🚜 FARM GRID */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .plot { 
             background: #472f22; 
-            height: 125px; 
-            border-radius: 18px; 
+            height: 110px; 
+            border-radius: 14px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -130,54 +118,44 @@
             cursor: pointer; 
             border: 3px solid #2b1c14; 
             font-weight: bold; 
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s ease;
             box-sizing: border-box;
+            position: relative;
+            z-index: 10;
         }
-        .plot * { pointer-events: none; } /* İçindeki yazıların tıklamayı bozmasını engeller */
-        .plot:active { transform: scale(0.96); }
-        .plot.growing { background: #5a3d2e; border-color: var(--accent); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
-        .plot.ready { 
-            background: var(--primary); 
-            border-color: #34d399; 
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            animation: pulseGlow 2s infinite;
-        }
-        
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
+        .plot * { pointer-events: none; } /* İçindeki elementlerin tıklamayı bozmasını engeller */
+        .plot.growing { background: #5a3d2e; border-color: var(--accent); }
+        .plot.ready { background: var(--primary); border-color: #34d399; }
 
         /* 🛒 SEED MARKET */
         .market { 
-            background: rgba(15, 23, 42, 0.4); 
-            border: 1.5px solid var(--accent); 
-            border-radius: 18px; 
+            background: rgba(0,0,0,0.2); 
+            border: 2px solid var(--accent); 
+            border-radius: 14px; 
             padding: 12px; 
             text-align: left; 
         }
-        .market-title { font-size: 12px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 10px; }
+        .market-title { font-size: 12px; font-weight: bold; color: var(--accent); text-transform: uppercase; text-align: center; margin-bottom: 8px; }
         
         .market-row { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            background: rgba(30, 41, 59, 0.4); 
-            padding: 10px 14px; 
-            margin: 8px 0; 
-            border-radius: 12px; 
+            background: #293548; 
+            padding: 8px 12px; 
+            margin: 6px 0; 
+            border-radius: 8px; 
             cursor: pointer; 
-            border: 2px solid transparent; 
-            transition: border-color 0.2s;
+            border: 3px solid transparent; 
             box-sizing: border-box;
+            position: relative;
+            z-index: 10;
         }
         .market-row * { pointer-events: none; }
         .market-row.active-seed { 
             border-color: var(--accent); 
-            background: rgba(245, 158, 11, 0.12); 
+            background: #1e293b; 
         }
-        .badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 13px; }
+        .badge { background: var(--primary); color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -200,40 +178,40 @@
     <div class="bag">
         <div class="bag-title">🎒 Active Fertilizer</div>
         <div class="bag-grid">
-            <div class="bag-card active" id="f-normal" onclick="setFertilizer('normal', event)">
+            <div class="bag-card active" id="f-normal" onclick="setFertilizer('normal')">
                 <span>🫙 Normal</span>
-                <div style="font-size: 12px; color: #94a3b8; margin-top:2px;">Stock: <b id="ui-stock-n" style="color:white">1</b></div>
-                <button class="ad-btn" onclick="watchAd('normal', event)">📺 Ads (<span id="ui-prog-n">0/2</span>)</button>
+                <div style="font-size: 12px; margin-top:2px;">Stock: <b id="ui-stock-n">1</b></div>
+                <button class="ad-btn" onclick="watchAd('normal', event)">Ad (<span id="ui-prog-n">0/2</span>)</button>
             </div>
-            <div class="bag-card" id="f-super" onclick="setFertilizer('super', event)">
+            <div class="bag-card" id="f-super" onclick="setFertilizer('super')">
                 <span>🧪 Super</span>
-                <div style="font-size: 12px; color: #94a3b8; margin-top:2px;">Stock: <b id="ui-stock-s" style="color:white">0</b></div>
-                <button class="ad-btn" onclick="watchAd('super', event)">📺 Ads (<span id="ui-prog-s">0/4</span>)</button>
+                <div style="font-size: 12px; margin-top:2px;">Stock: <b id="ui-stock-s">0</b></div>
+                <button class="ad-btn" onclick="watchAd('super', event)">Ad (<span id="ui-prog-s">0/4</span>)</button>
             </div>
         </div>
     </div>
 
     <!-- FARM GRID -->
     <div class="grid">
-        <div class="plot" id="plot-0" onclick="clickPlot(0, event)">🟫<br><span id="text-0" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
-        <div class="plot" id="plot-1" onclick="clickPlot(1, event)">🟫<br><span id="text-1" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
-        <div class="plot" id="plot-2" onclick="clickPlot(2, event)">🟫<br><span id="text-2" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
-        <div class="plot" id="plot-3" onclick="clickPlot(3, event)">🟫<br><span id="text-3" style="margin-top: 5px; font-size: 13px; opacity: 0.7;">Empty Soil</span></div>
+        <div class="plot" id="plot-0" onclick="clickPlot(0)">🟫<br><span id="text-0">Empty Soil</span></div>
+        <div class="plot" id="plot-1" onclick="clickPlot(1)">🟫<br><span id="text-1">Empty Soil</span></div>
+        <div class="plot" id="plot-2" onclick="clickPlot(2)">🟫<br><span id="text-2">Empty Soil</span></div>
+        <div class="plot" id="plot-3" onclick="clickPlot(3)">🟫<br><span id="text-3">Empty Soil</span></div>
     </div>
 
     <!-- SEED MARKET -->
     <div class="market">
         <div class="market-title">🛒 Seed Market</div>
-        <div class="market-row active-seed" id="s-tomato" onclick="setSeed('tomato', 3, '🍅', 8, 6, event)">
-            <div><b>🍅 Tomato</b> <br><small style="color: #94a3b8;">Time: 8s | Reward: 6 🪙</small></div>
+        <div class="market-row active-seed" id="s-tomato" onclick="setSeed('tomato', 3, '🍅', 8, 6)">
+            <div><b>🍅 Tomato</b> <br><small style="color: #94a3b8;">Time: 8s | Sell: 6 🪙</small></div>
             <span class="badge">3 🪙</span>
         </div>
-        <div class="market-row" id="s-pepper" onclick="setSeed('pepper', 7, '🫑', 18, 15, event)">
-            <div><b>🫑 Pepper</b> <br><small style="color: #94a3b8;">Time: 18s | Reward: 15 🪙</small></div>
+        <div class="market-row" id="s-pepper" onclick="setSeed('pepper', 7, '🫑', 18, 15)">
+            <div><b>🫑 Pepper</b> <br><small style="color: #94a3b8;">Time: 18s | Sell: 15 🪙</small></div>
             <span class="badge">7 🪙</span>
         </div>
-        <div class="market-row" id="s-berry" onclick="setSeed('berry', 15, '🍓', 40, 40, event)">
-            <div><b>🍓 Golden Berry</b> <br><small style="color: #94a3b8;">Time: 40s | Reward: 40 🪙</small></div>
+        <div class="market-row" id="s-berry" onclick="setSeed('berry', 15, '🍓', 40, 40)">
+            <div><b>🍓 Golden Berry</b> <br><small style="color: #94a3b8;">Time: 40s | Sell: 40 🪙</small></div>
             <span class="badge">15 🪙</span>
         </div>
     </div>
@@ -254,3 +232,46 @@
 
     let plots = [
         { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
+        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
+        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null },
+        { status: 'empty', name: '', emoji: '', time: 0, sell: 0, timer: null }
+    ];
+
+    function setSeed(type, cost, emoji, time, sell) {
+        activeSeed = type;
+        seedCost = cost;
+        seedEmoji = emoji;
+        seedTime = time;
+        seedSell = sell;
+        document.querySelectorAll('.market-row').forEach(r => r.classList.remove('active-seed'));
+        document.getElementById('s-' + type).classList.add('active-seed');
+        document.getElementById('ui-seed').innerText = emoji + " " + type.toUpperCase();
+    }
+
+    function setFertilizer(type) {
+        selectedFert = type;
+        document.querySelectorAll('.bag-card').forEach(c => c.classList.remove('active'));
+        document.getElementById('f-' + type).classList.add('active');
+    }
+
+    function watchAd(type, event) {
+        if(event) event.stopPropagation(); // Karta tıklama olayını engelle
+        alert("Ad loading...");
+        setTimeout(() => {
+            if (type === 'normal') {
+                adProgN++;
+                if (adProgN >= 2) { adProgN = 0; fertNormal++; alert("Earned 1 Normal Fertilizer!"); }
+            } else {
+                adProgS++;
+                if (adProgS >= 4) { adProgS = 0; fertSuper++; alert("Earned 1 Super Fertilizer!"); }
+            }
+            render();
+        }, 1000);
+    }
+
+    function clickPlot(id) {
+        let p = plots[id];
+        let el = document.getElementById('plot-' + id);
+
+        if (p.status === 'empty') {
+            if (balance >= seedCost) {
